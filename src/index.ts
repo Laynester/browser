@@ -4,41 +4,30 @@ import contextMenu from 'electron-context-menu';
 
 
 let mainWindow: BrowserWindow = null;
-let pluginName;
+let plugins = {
+  flash: {
+    name: 'win/x32/pepflashplayer.dll',
+    version: '32.0.0.363',
+  }
+}
 
 switch (process.platform) {
-  case 'win32':
-      if (process.arch === "x32" || process.arch === "ia32") {
-          pluginName = 'win/pepflashplayer-32.dll';
-      } else {
-          pluginName = 'win/pepflashplayer.dll';
-      }
-      break;
   case 'darwin':
-      pluginName = 'mac/PepperFlashPlayer.plugin';
-      break;
-  case "linux":
-      if (process.arch === "arm") {
-          pluginName = 'lin/libpepflashplayer_arm.so';
-      } else {
-          pluginName = 'lin/libpepflashplayer_amd.so';
-      }
-      break;
-  case "freebsd":
-  case "netbsd":
-  case "openbsd":
-      pluginName = 'libpepflashplayer.so';
-      break;
+    plugins.flash.name = 'osx/PepperFlashPlayer.plugin'
+    break
+  default:
+    if (process.arch === 'x64' || process.arch === 'arm64') plugins.flash.name = 'win/x64/pepflashplayer.dll'
+    break
+}
+
+app.commandLine.appendSwitch('disable-renderer-backgrounding')
+if (process.platform !== 'darwin') {
+  app.commandLine.appendSwitch('high-dpi-support', '1')
+  app.commandLine.appendSwitch('force-device-scale-factor', '1')
 }
 app.commandLine.appendSwitch('--enable-npapi')
-if (process.platform !== "darwin") {
-  app.commandLine.appendSwitch('high-dpi-support', "1");
-  app.commandLine.appendSwitch('force-device-scale-factor', "1");
-} 
-app.commandLine.appendSwitch('ppapi-flash-path', path.join(__dirname.includes(".asar") ? process.resourcesPath : __dirname, "flash/" + pluginName));
-//app.disableHardwareAcceleration();
-app.commandLine.appendSwitch('disable-site-isolation-trials');
-app.commandLine.appendSwitch('no-sandbox');
+app.commandLine.appendSwitch('--ppapi-flash-path', path.join(__dirname.includes('.asar') ? process.resourcesPath : __dirname, '../flash/' + plugins.flash.name))
+app.commandLine.appendSwitch('--ppapi-flash-version', plugins.flash.version)
 
 const createWindow = (): void => {
   // Create the browser window.
