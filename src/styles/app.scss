@@ -1,0 +1,37 @@
+html,body,#root {
+    height:100%;
+    width:100%;
+    position: relative;
+    margin:0;
+    display: flex;
+    overflow: hidden;
+    flex-direction: column;
+    flex-shrink: 0;
+    font-family: 'Ubuntu', sans-serif;
+    
+    * {
+        box-sizing: border-box;
+    }
+
+    @import './titlebar.scss';
+    @import './tabs.scss';
+
+    .webview-container {
+        height:100%;
+        width:100%;
+        position: relative;
+        display: flex;
+        align-items: center;
+        webview {
+            flex: 0 1;
+            width: 0;
+            height: 0;
+
+            &.active {
+                flex: 1;
+                width: 100%;
+                height: 100%;
+            }
+        }
+    }
+}

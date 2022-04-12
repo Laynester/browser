@@ -1,0 +1,59 @@
+.titlebar {
+    height:38px;
+    border-bottom:1px solid black;
+    display:flex;
+    padding:0 75px;
+    align-items: center;
+    background-color: #463F43;
+    user-select: none;
+    -webkit-app-region: drag;
+    z-index: 2;
+    flex-shrink: 0;
+
+    .controls {
+        display: flex;
+        gap:3px;
+
+        .control-button {
+            &.disabled {
+                color:rgba(white,.3);
+                cursor: none;
+            }
+        }
+    }
+
+    .control-button,
+    .urlBar {
+        border:1px solid rgba(white,.3);
+        border-radius:3px;
+        background-color: rgba(white,.2);
+        color:white;
+        padding:2px 4px;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+    }
+
+    .urlBar {
+        width:50%;
+        color:white;
+        box-shadow: none;
+        margin: 0 2px;
+        font-size: 14px;
+        transition: all .8s ease;
+
+        &::placeholder {
+            color:white;
+            opacity: 0.5;
+            text-align: center !important;
+        }
+
+        &:not(:focus) {
+            text-align: center;
+        }
+    }
+
+    .w-25 {
+        width:25%;
+    }
+}

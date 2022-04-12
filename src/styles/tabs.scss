@@ -1,0 +1,28 @@
+.tab-container {
+    width:100%;
+    box-shadow: 0 -1px lighten(#463F43,14);
+    background-color: darken(#463F43,10);
+    display: flex;
+    color:white;
+    border-bottom:1px solid black;
+    z-index: 3;
+
+    .tab {
+        padding:3px 10px;
+        width: 100%;
+        font-size: 12px;
+        text-align: center;
+        align-items: center;
+        display: flex;
+        gap:3px;
+        justify-content: center;
+
+        &.active {
+            background-color: #463F43;
+        }
+
+        &:not(:last-child) {
+            border-right:1px solid lighten(#463F43,14);
+        }
+    }
+}
