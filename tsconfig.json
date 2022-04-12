@@ -9,10 +9,11 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "resolveJsonModule": true,
-    "isolatedModules": true,
+    "isolatedModules": false,
     "jsx": "react-jsx",
     "outDir": "dist",
-    "baseUrl": "."
+    "baseUrl": ".",
+    "incremental": false
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules"]

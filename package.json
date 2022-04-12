@@ -3,7 +3,7 @@
   "productName": "my-new-app",
   "version": "1.0.0",
   "description": "My Electron application description",
-  "main": "dist/index.js",
+  "main": "dist/app/application.js",
   "scripts": {
     "start": "tsc && electron .",
     "watch": "tsc -w",

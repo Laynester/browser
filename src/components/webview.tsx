@@ -1,6 +1,6 @@
-import { BrowserView, WebviewTag } from "electron";
+import { BrowserView, ipcRenderer, WebviewTag } from "electron";
 import { useCallback, useEffect, useMemo, useRef, WebViewHTMLAttributes } from "react";
-import { useAppContext } from "../appContext";
+import { useAppContext } from "../app/appContext";
 import Tabs from "./tabs";
 
 interface WebviewProps {
@@ -52,12 +52,20 @@ export default function Webview(props: WebviewProps) {
         });
     }, []);
 
+    const onNewWindow = (event) =>
+    {
+        console.log(event)
+        if (event.url.includes('about:blank')) return;
+        ipcRenderer.send("app/newWindow", {url: event.url,width:event.options.width, height: event.options.height,title: event.options.title});
+    };
+
     useEffect(() =>
     {
         let view: HTMLWebViewElement = ref.current;
-        view.addEventListener("did-navigate", onDidNavigate);
-        view.addEventListener("did-navigate-in-page", onDidNavigate);
-        view.addEventListener("page-title-updated", onPageUpdated);
+        view.addEventListener("did-navigate", onDidNavigate.bind(this));
+        view.addEventListener("did-navigate-in-page", onDidNavigate.bind(this));
+        view.addEventListener("page-title-updated", onPageUpdated.bind(this));
+        view.addEventListener("new-window", onNewWindow.bind(this));
         view.setAttribute("plugins", "");
         view.setAttribute("enableremotemodule", "true");
 
@@ -79,12 +87,10 @@ export default function Webview(props: WebviewProps) {
             view.removeEventListener("did-navigate", onDidNavigate);
             view.removeEventListener("did-navigate-in-page", onDidNavigate);
             view.removeEventListener("page-title-updated", onPageUpdated);
+            view.removeEventListener("new-window", onNewWindow);
           };
-    },[]);
-
-    const jsCode = 'window.ReactNativeWebView.postMessage(document.documentElement.innerHTML)'
-
-
+    }, [ref]);
+    
     return (
         <webview
             src={url}

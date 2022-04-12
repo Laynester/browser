@@ -1,7 +1,7 @@
 .tab-container {
     width:100%;
-    box-shadow: 0 -1px lighten(#463F43,14);
-    background-color: darken(#463F43,10);
+    box-shadow: 0 -1px lighten($title-colour,14);
+    background-color: darken($title-colour,10);
     display: flex;
     color:white;
     border-bottom:1px solid black;
@@ -18,11 +18,11 @@
         justify-content: center;
 
         &.active {
-            background-color: #463F43;
+            background-color: $title-colour;
         }
 
         &:not(:last-child) {
-            border-right:1px solid lighten(#463F43,14);
+            border-right:1px solid lighten($title-colour,14);
         }
     }
 }

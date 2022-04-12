@@ -1,5 +1,5 @@
 /* @ts-ignore */
-import { useAppContext } from "../appContext";
+import { useAppContext } from "../app/appContext";
 import Webview from "./webview";
 
 export default function Webviews()

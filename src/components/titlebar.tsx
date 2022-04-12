@@ -1,14 +1,14 @@
 import { ipcRenderer } from "electron/renderer";
 import { useCallback, useEffect, useState } from "react";
 import { flushSync } from "react-dom";
-import { useAppContext } from "../appContext";
+import { useAppContext } from "../app/appContext";
 import { ITab } from "../interfaces/ITab";
-import { lastInArray } from "../utils";
+import { lastInArray, Tab } from "../utils";
 import Controls from "./controls";
 
 export default function TitleBar() {
     const [urlValue, setUrlValue] = useState<string>("");
-    const { tabs, setTab, selectedTab, setTabs } = useAppContext();
+    const { tabs, setTab, selectedTab, setTabs, setHistory } = useAppContext();
     const [activeTab, setActiveTab] = useState<ITab>(null);
 
     const toggleSize = () => {
@@ -32,7 +32,9 @@ export default function TitleBar() {
 
         if (!tab) return;
 
-        console.log('updated tabs', tab.routes)
+        console.log('updated tabs', tab.routes);
+
+        console.log(tab)
 
         if (lastInArray(tab.routes).startsWith('internal://')) return setUrlValue('')
 
@@ -61,15 +63,7 @@ export default function TitleBar() {
                     setTabs((prevValue) => {
                         const newArray = [...prevValue];
 
-                        let newUrl = {
-                            id: tabs.length + 1,
-                            url: url,
-                            text: "yuh " + tabs.length + 1,
-                            canGoBack: false,
-                            canGoForward: false,
-                            webview: null,
-                            routes: [url]
-                        };
+                        let newUrl = new Tab(tabs.length + 1, url, url);
 
                         newArray.push(newUrl);
 
@@ -90,6 +84,15 @@ export default function TitleBar() {
                         return newArray;
                     });
                 }
+            
+                setHistory(prevHistory =>
+                    {
+                        const newHistory = [...prevHistory];
+
+                        newHistory.push(new Tab(tabs.length + 1, url, url));
+
+                        return newHistory;
+                    })
             } 
     }
 
@@ -109,9 +112,10 @@ export default function TitleBar() {
             <div className="w-25 controls">
                 <Controls />
             </div>
-            <input
+            <div className="urlBar">
+                <input
                 type="text"
-                className="urlBar"
+                className="urlBar-input"
                 value={urlValue}
                 onChange={(event) => setUrlValue(event.target.value)}
                 onKeyDown={handleKeyDown}
@@ -119,6 +123,7 @@ export default function TitleBar() {
                 onBlur={ (event) => focusBlur('blur') }
                 onFocus={ (event) => focusBlur('focus') }
             />
+            </div>
             <div className="w-25">{urlValue}</div>
         </div>
     );

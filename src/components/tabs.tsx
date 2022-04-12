@@ -1,10 +1,11 @@
 import { useEffect } from "react";
-import { useAppContext } from "../appContext"
-import Tab from "./tab";
+import { useAppContext } from "../app/appContext"
+import TabComponent from "./tabComponent";
+import { Tab } from "../utils";
 
 export default function Tabs()
 {
-    const { tabs, setTabs, setTab } = useAppContext();
+    const { tabs, setTabs, setTab, setHistory } = useAppContext();
 
     useEffect(() =>
     {
@@ -18,8 +19,18 @@ export default function Tabs()
                     const newArray = [...prevValue];
 
                     let newId = newArray.length + 1;
+
+                    newArray.push(new Tab(newId, 'internal://startpage', 'internal://startpage'));
+
+                    setHistory(prevHistory =>
+                    {
+                        const newHistory = [...prevHistory];
+
+                        newHistory.push(new Tab(newId, 'internal://startpage', 'internal://startpage'));
+
+                        return newHistory;
+                    })
             
-                    newArray.push({ id: newId, url: 'internal://startpage', text: 'yuh ' + newId, canGoBack: false, canGoForward: false, webview: null,routes:['internal://startpage'] });
                     setTab(newId);
 
                     return newArray
@@ -31,6 +42,6 @@ export default function Tabs()
     if (tabs && tabs.length <= 1) return null;
 
     return <div className="tab-container">
-        { tabs && tabs.length > 1 && tabs.map(tab => <Tab key={tab.id} { ...tab } />) }
+        { tabs && tabs.length > 1 && tabs.map(tab => <TabComponent key={tab.id} { ...tab } />) }
     </div>
 }

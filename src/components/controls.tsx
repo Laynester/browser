@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { useAppContext } from "../appContext";
+import { useAppContext } from "../app/appContext";
 import { ITab } from "../interfaces/ITab";
 
 export default function Controls()

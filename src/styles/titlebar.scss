@@ -2,9 +2,9 @@
     height:38px;
     border-bottom:1px solid black;
     display:flex;
-    padding:0 75px;
+    padding:5px 75px;
     align-items: center;
-    background-color: #463F43;
+    background-color: $title-colour;
     user-select: none;
     -webkit-app-region: drag;
     z-index: 2;
@@ -38,18 +38,30 @@
         width:50%;
         color:white;
         box-shadow: none;
-        margin: 0 2px;
+        margin: 0 4px;
         font-size: 14px;
-        transition: all .8s ease;
+        position: relative;
+        height:100%;
 
-        &::placeholder {
-            color:white;
-            opacity: 0.5;
-            text-align: center !important;
-        }
+        .urlBar-input {
+            border:0;
+            box-shadow: none;
+            background: transparent;
+            outline: none;
+            color: inherit;
+            transition: all 2s ease;
+            width: 100%;
 
-        &:not(:focus) {
-            text-align: center;
+
+            &::placeholder {
+                color:white;
+                opacity: 0.5;
+                text-align: center !important;
+            }
+    
+            &:not(:focus) {
+                text-align: center;
+            }
         }
     }
 
