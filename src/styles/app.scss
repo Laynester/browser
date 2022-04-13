@@ -1,6 +1,4 @@
-$title-colour: rgba(white,.05);
-
-html,body,#root {
+html,body,#root,.root {
     height:100%;
     width:100%;
     position: relative;
@@ -10,7 +8,9 @@ html,body,#root {
     flex-direction: column;
     flex-shrink: 0;
     font-family: 'Ubuntu', sans-serif;
-    background-color: transparent;
+    background-color: var(--windowColor);
+
+
     
     * {
         box-sizing: border-box;

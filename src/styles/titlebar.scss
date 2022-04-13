@@ -4,7 +4,7 @@
     display:flex;
     padding:5px 75px;
     align-items: center;
-    background-color: $title-colour;
+    background-color: var(--windowColor);
     user-select: none;
     -webkit-app-region: drag;
     z-index: 2;

@@ -7,7 +7,7 @@
     "editor.codeActionsOnSave": {
         "source.fixAll": true,
         "source.fixAll.sortJSON": false,
-        "source.organizeImports": true
+        "source.organizeImports": false
     },
 	"git.ignoreLimitWarning": true,
     "files.eol": "\n",

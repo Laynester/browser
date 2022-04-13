@@ -1,4 +1,4 @@
-import React, { createContext, Dispatch, FC, SetStateAction, useContext, useState } from 'react';
+import React, { createContext, Dispatch, FC, SetStateAction, useContext, useEffect, useState } from 'react';
 import { BrowserConfig } from '../browser/browserConfig';
 import { ITab } from '../interfaces/ITab';
 
@@ -21,14 +21,17 @@ const AppContext = createContext<IAppContext>({
     setBrowserConfig: null
 });
 
-export const AppContextProvider: FC<{ children: React.ReactNode }> = (props) =>
-{
+export const AppContextProvider: FC<{ children: React.ReactNode }> = (props) => {
     const [ tabs, setTabs ] = useState<ITab[]>([]);
     const [ selectedTab, setTab ] = useState<number>(0);
     
-    const [ browserConfig, setBrowserConfig ] = useState<BrowserConfig>(new BrowserConfig()); 
+    const [ browserConfig, setBrowserConfig ] = useState<BrowserConfig>();
+    
+    useEffect(() => {
+        setBrowserConfig(new BrowserConfig());
+    },[]);
 
-    return <AppContext.Provider value={ { tabs, setTabs, selectedTab, setTab, browserConfig, setBrowserConfig } }>{ props.children }</AppContext.Provider>
+    return <AppContext.Provider value={ { tabs, setTabs, selectedTab, setTab, browserConfig, setBrowserConfig } }>{ props.children }</AppContext.Provider>;
 };
 
 export const useAppContext = () => useContext(AppContext);

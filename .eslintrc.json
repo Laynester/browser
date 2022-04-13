@@ -32,7 +32,7 @@
         "quotes": [ "error", "single" ],
         "@typescript-eslint/indent": [ "error", 4, { "SwitchCase": 1 } ],
         "array-bracket-spacing": [ "error", "always" ],
-        "brace-style": [ "error", "allman" ],
+        "brace-style": [ "error", "1tbs" ],
         "template-curly-spacing": [ "error", "always" ],
         "no-multi-spaces": [ "error" ],
         "jsx-quotes": [ "error" ],
@@ -40,6 +40,7 @@
         "react/jsx-curly-spacing": [ "error", { "when": "always", "children": true } ],
         "react/jsx-equals-spacing": [ "error" ],
         "react/jsx-newline": [ "error", { "prevent": true } ],
+        "semi": "error",
         "@typescript-eslint/object-curly-spacing": [ "error", "always",
             {
                 "arraysInObjects": true,

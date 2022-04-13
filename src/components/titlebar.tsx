@@ -6,64 +6,45 @@ import { ITab } from '../interfaces/ITab';
 import { lastInArray, Tab } from '../utils';
 import Controls from './controls';
 
-export default function TitleBar() 
-{
+export default function TitleBar() {
     const [ urlValue, setUrlValue ] = useState<string>('');
-    const { tabs, setTab, selectedTab, setTabs } = useAppContext();
+    const { tabs, setTab, selectedTab, setTabs, browserConfig, setBrowserConfig } = useAppContext();
     const [ activeTab, setActiveTab ] = useState<ITab>(null);
 
-    const toggleSize = () => 
-    {
+    const toggleSize = () => {
         ipcRenderer.send('electron-react-titlebar/maximumize/set', 0);
     };
 
-    const purifyUrl = (url) => 
-    {
-        if (/(\.\w+\/?|\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}(:\d{1,4})?)$/i.test(url)) 
-        {
+    const purifyUrl = (url) => {
+        if (/(\.\w+\/?|\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}(:\d{1,4})?)$/i.test(url)) {
             url = (!url.match(/^[a-zA-Z]+:\/\//)) ? 'http://' + url : url;
-        }
-        else 
-        {
+        } else {
             url = (!url.match(/^[a-zA-Z]+:\/\//)) ? 'https://www.google.com/search?q=' + url.replace(' ', '+') : url;
         }
         return url;
-    }
+    };
 
-    useEffect(() =>
-    {
+    useEffect(() => {
         let tab: ITab = tabs.filter(tab => tab.id === selectedTab)[0];
         
         setActiveTab(tab);
 
         if (!tab) return;
 
-        if (lastInArray(tab.routes).startsWith('internal://')) return setUrlValue('')
+        if (lastInArray(tab.routes).startsWith('internal://')) return setUrlValue('');
 
         setUrlValue(lastInArray(tab.routes).replace(/^https?:\/\//, ''));
         
-    }, [ tabs,activeTab, selectedTab ])
+    }, [ tabs,activeTab, selectedTab ]);
 
-    const handleKeyDown = (event) =>
-    {
-        if (event.key === 'Enter')
-        {
+    const handleKeyDown = useCallback((event) => {
+        if (event.key === 'Enter') {
             let url: string = purifyUrl(urlValue);
-            if (!url.startsWith('http'))
-            {
-                flushSync(() =>
-                {
-                    setUrlValue((prevValue) =>
-                    {
-                        return url;
-                    });
-                });
-            }
-            if (tabs.length == 0)
-            {
-
-                setTabs((prevValue) => 
-                {
+            flushSync(() => {
+                setUrlValue(url);
+            });
+            if (tabs.length == 0) {
+                setTabs((prevValue) => {
                     const newArray = [ ...prevValue ];
 
                     let newUrl = new Tab(tabs.length + 1, url, url);
@@ -74,17 +55,12 @@ export default function TitleBar()
 
                     return newArray;
                 });
-            }
-            else 
-            {
-                setTabs((prevValue) => 
-                {
+            } else {
+                setTabs((prevValue) => {
                     const newArray = [ ...prevValue ];
 
-                    newArray.forEach((tab) => 
-                    {
-                        if (tab.id === selectedTab) 
-                        {
+                    newArray.forEach((tab) => {
+                        if (tab.id === selectedTab) {
                             tab.url = url;
                         }
                     });
@@ -93,25 +69,20 @@ export default function TitleBar()
                 });
             }
             
-            /* setHistory(prevHistory =>
-            {
-                const newHistory = [ ...prevHistory ];
-
-                newHistory.push(new Tab(tabs.length + 1, url, url));
-
-                return newHistory;
-            }) */
+            setBrowserConfig((config) => {
+                config.pushHistory(url);
+                return config;
+            });
         } 
-    }
+    },[ setTabs, tabs, setBrowserConfig, selectedTab, setUrlValue, setTab, urlValue ]);
 
-    const focusBlur = useCallback((type: string) =>
-    {
+    const focusBlur = useCallback((type: string) => {
         if (!activeTab) return;
 
         if (lastInArray(activeTab.routes).startsWith('internal://')) return setUrlValue('');
 
         if (type == 'blur') setUrlValue(lastInArray(activeTab.routes).replace(/^https?:\/\//, ''));
-        else setUrlValue(lastInArray(activeTab.routes))
+        else setUrlValue(lastInArray(activeTab.routes));
         
     }, [ activeTab ]);
 

@@ -1,13 +1,11 @@
 
-export const loadHistory = () =>
-{
-    return null
+export const loadHistory = () => {
+    return null;
     /* let browser = require('../../resources/browser.json');
     return browser.history; */
 };
 
-export function saveHistory(json)
-{
+export function saveHistory(json) {
     return null;
     
     /* let browser = require('../../resources/browser.json');
