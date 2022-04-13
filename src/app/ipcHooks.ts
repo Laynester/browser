@@ -1,18 +1,46 @@
-import { BrowserWindow, ipcMain } from "electron"
-import { IpcMainEvent } from "electron/main";
-import { Application } from "./application"
+import { app, BrowserWindow, globalShortcut, ipcMain, ipcRenderer, WebContents } from 'electron'
+import { IpcMainEvent } from 'electron/main';
+import { Application } from './application';
 
 export class ipcHooks
 {
     private mainWindow: BrowserWindow = null;
     private _windows: Map<string, BrowserWindow> = new Map();
 
-    constructor(app: Application)
+    constructor(application: Application)
     {
-        this.mainWindow = app.mainWindow;
+        this.mainWindow = application.mainWindow;
 
-        ipcMain.on('electron-react-titlebar/maximumize/set', this.onTitleMaximize.bind(this))
-        ipcMain.on('app/newWindow', this.onNewWindow.bind(this))
+        ipcMain.on('electron-react-titlebar/maximumize/set', this.onTitleMaximize.bind(this));
+
+        app.on('web-contents-created', (webContentsCreatedEvent, contents) =>
+        {
+            if (contents.getType() === 'webview') 
+            {
+                contents.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) =>
+                {
+                    event.preventDefault()
+                    if (disposition !== 'new-window') return;
+
+                    if (this._windows.get(frameName)) return this._windows.get(frameName).focus();
+
+                    options.show = false;
+
+                    let window = new BrowserWindow(options);
+                    window.on('page-title-updated', () => 
+                    {
+                        window.show() 
+                    })
+                    window.on('close', () => 
+                    {
+                        this._windows.delete(frameName) 
+                    })
+                    event.newGuest = window;
+                    this._windows.set(frameName, window);
+
+                })
+            }
+        });
     }
 
     private onTitleMaximize(event: IpcMainEvent): void
@@ -22,34 +50,11 @@ export class ipcHooks
             if (this.mainWindow.isMaximized())
             {
                 this.mainWindow.unmaximize()
-            } else
+            }
+            else
             {
                 this.mainWindow.maximize()
             }
         }
-    }
-
-    private onNewWindow(event: IpcMainEvent, args: any): void
-    {
-        if (this._windows.get(args.title)) return this._windows.get(args.title).focus();
-        let window = new BrowserWindow({
-            height: args.height,
-            width: args.width,
-            frame: true,
-            vibrancy: 'ultra-dark',
-            webPreferences: {
-                nodeIntegration: true,
-                webviewTag: true,
-                plugins: true
-            }
-        });
-
-        window.show();
-
-        window.loadURL(args.url);
-
-        window.on('close', ()=> this._windows.delete(args.title));
-
-        this._windows.set(args.title, window)
     }
 }

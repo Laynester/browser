@@ -1,12 +1,12 @@
-import { useCallback, useEffect, useState } from "react";
-import { useAppContext } from "../app/appContext";
-import { ITab } from "../interfaces/ITab";
+import { useCallback, useEffect, useState } from 'react';
+import { useAppContext } from '../app/appContext';
+import { ITab } from '../interfaces/ITab';
 
 export default function Controls()
 {
     const { selectedTab, tabs } = useAppContext();
 
-    const [activeTab, setActiveTab] = useState<ITab>();
+    const [ activeTab, setActiveTab ] = useState<ITab>();
 
     useEffect(() =>
     {
@@ -18,14 +18,14 @@ export default function Controls()
 
         setActiveTab(tab)
         
-    }, [tabs, selectedTab]);
+    }, [ tabs, selectedTab ]);
 
     const canDo = useCallback((action: string) =>
     {
         if (!activeTab) return false;
         if (action === 'back') return activeTab.canGoBack;
         if (action === 'forward') return activeTab.canGoForward;
-    }, [activeTab]);
+    }, [ activeTab ]);
 
     const doAction = (action: string) =>
     {
@@ -36,10 +36,10 @@ export default function Controls()
     }
     
     return <>
-        <div className={`control-button ${canDo('back') ? `` : `disabled`}`} onClick={() => doAction('back')}>
+        <div className={ `control-button ${ canDo('back') ? '' : 'disabled' }` } onClick={ () => doAction('back') }>
             <i className="fa-solid fa-arrow-left"></i>
         </div>
-        <div className={`control-button ${ canDo('forward') ? `` : `disabled`}`} onClick={()=> doAction('forward')}>
+        <div className={ `control-button ${ canDo('forward') ? '' : 'disabled' }` } onClick={ ()=> doAction('forward') }>
             <i className="fa-solid fa-arrow-right"></i>
         </div>
     </>

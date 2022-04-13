@@ -1,100 +1,136 @@
-import { BrowserView, ipcRenderer, WebviewTag } from "electron";
-import { useCallback, useEffect, useMemo, useRef, WebViewHTMLAttributes } from "react";
-import { useAppContext } from "../app/appContext";
-import Tabs from "./tabs";
+import { BrowserView, ipcRenderer, WebviewTag } from 'electron';
+import Mousetrap from 'mousetrap';
+import {
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    WebViewHTMLAttributes,
+} from 'react';
+import { useAppContext } from '../app/appContext';
+import { Tab } from '../utils';
 
 interface WebviewProps {
     id: number;
     url: string;
 }
-export default function Webview(props: WebviewProps) {
+export default function Webview(props: WebviewProps) 
+{
     const { id = -1, url = null } = props;
     const ref = useRef<WebviewTag>();
-    const { selectedTab, setTabs } = useAppContext();
+    const { selectedTab, setTabs, setTab } = useAppContext();
 
-    const onDidNavigate = (e) =>
+    const updateSelf = useCallback((option: string, value: any) => 
+    {
+        setTabs((prevValue) => 
+        {
+            const newArray = [ ...prevValue ];
+
+            newArray.forEach((tab) => 
+            {
+                if (tab.id === selectedTab) 
+                {
+                    if (option === 'routes') return tab.routes.push(value);
+                    else tab[option] = value;
+                }
+            });
+
+            return newArray;
+        });
+    },[ setTabs, selectedTab ]);
+
+    const onDidNavigate = useCallback((e) => 
     {
         if (e.url === url) return;
 
-        console.log('hre')
+        updateSelf('routes', e.url);
+    }, [ updateSelf, url ]);
 
-        setTabs((prevValue) => {
-            const newArray = [...prevValue];
-
-            newArray.forEach((tab) => {
-                if (tab.id === selectedTab)
-                {
-                    tab.routes.push(e.url);
-                    tab.canGoBack = ref.current.canGoBack();
-                    tab.canGoForward = ref.current.canGoForward();
-                }
-            });
-
-            return newArray;
-        });
-    };
-
-    const onPageUpdated = useCallback((event) =>
+    const onPageUpdated = useCallback((event) => 
     {
-        setTabs((prevValue) => {
-            const newArray = [...prevValue];
+        updateSelf('text', ref.current.getTitle());
+    }, [ updateSelf, ref ]);
 
-            newArray.forEach((tab) => {
-                if (tab.id === selectedTab)
-                {
-                    //console.log(view.webContents.getTitle())
-                    tab.text = ref.current.getTitle();
-                    
-                }
-            });
-
-            return newArray;
-        });
-    }, []);
-
-    const onNewWindow = (event) =>
+    const onNewWindow = useCallback((e, contents) => 
     {
-        console.log(event)
-        if (event.url.includes('about:blank')) return;
-        ipcRenderer.send("app/newWindow", {url: event.url,width:event.options.width, height: event.options.height,title: event.options.title});
-    };
+        const { url, frameName, disposition, options } = e;
+        e.preventDefault();
+        if (disposition === 'foreground-tab') 
+        {
+            e.preventDefault();
+            setTabs(prevValue =>
+            {
+                let newArray = [ ...prevValue ];
 
-    useEffect(() =>
+                let newint = newArray.length + 1;
+                newArray.push(new Tab(newint, url, url))
+                setTab(newint)
+                return newArray;
+            })
+        }
+        else if (disposition === 'background-tab') 
+        {
+            e.preventDefault();
+            console.log('here or wtv 3');
+            //this.window.viewManager.create({ url, active: false }, true);
+        }
+
+        //console.log(event)
+        //if (event.url.includes('about:blank')) return;
+        //ipcRenderer.send("app/newWindow", {url: event.url,width:event.options.width, height: event.options.height,title: event.options.title});
+    },[ setTabs, setTab ])
+
+    useEffect(() => 
     {
         let view: HTMLWebViewElement = ref.current;
-        view.addEventListener("did-navigate", onDidNavigate.bind(this));
-        view.addEventListener("did-navigate-in-page", onDidNavigate.bind(this));
-        view.addEventListener("page-title-updated", onPageUpdated.bind(this));
-        view.addEventListener("new-window", onNewWindow.bind(this));
-        view.setAttribute("plugins", "");
-        view.setAttribute("enableremotemodule", "true");
+        view.addEventListener('did-navigate', onDidNavigate.bind(this));
+        view.addEventListener('did-navigate-in-page', onDidNavigate.bind(this));
+        view.addEventListener('page-title-updated', onPageUpdated.bind(this));
+        view.addEventListener('new-window', onNewWindow.bind(this));
+        view.addEventListener('web-contents-created', onNewWindow.bind(this));
+        view.setAttribute('plugins', '');
+        view.setAttribute('allowpopups', '');
+        view.setAttribute('webpreferences', 'nativeWindowOpen=true');
 
-        setTabs((prevValue) => {
-            const newArray = [...prevValue];
+        setTabs((prevValue) => 
+        {
+            const newArray = [ ...prevValue ];
 
-            newArray.forEach((tab) => {
-                if (tab.id === selectedTab)
+            newArray.forEach((tab) => 
+            {
+                if (tab.id === selectedTab) 
                 {
                     tab.webview = ref.current;
-                    
                 }
             });
 
             return newArray;
         });
 
-        return () => {
-            view.removeEventListener("did-navigate", onDidNavigate);
-            view.removeEventListener("did-navigate-in-page", onDidNavigate);
-            view.removeEventListener("page-title-updated", onPageUpdated);
-            view.removeEventListener("new-window", onNewWindow);
-          };
-    }, [ref]);
-    
+        return () => 
+        {
+            view.removeEventListener('did-navigate', onDidNavigate.bind(this));
+            view.removeEventListener(
+                'did-navigate-in-page',
+                onDidNavigate.bind(this)
+            );
+            view.removeEventListener(
+                'page-title-updated',
+                onPageUpdated.bind(this)
+            );
+            view.removeEventListener('new-window', onNewWindow.bind(this));
+            view.removeEventListener(
+                'web-contents-created',
+                onNewWindow.bind(this)
+            );
+        };
+    }, [ ref, onDidNavigate, onNewWindow, onPageUpdated, selectedTab, setTabs ]);
+
     return (
         <webview
-            src={url}
-            ref={ref}
-            className={`${selectedTab === id ? `active` : ``}`} />
+            src={ url }
+            ref={ ref }
+            className={ `${ selectedTab === id ? 'active' : '' }` }
+        />
     );
 }

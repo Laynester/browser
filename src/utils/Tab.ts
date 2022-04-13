@@ -1,5 +1,5 @@
-import { WebviewTag } from "electron";
-import { ITab } from "../interfaces/ITab";
+import { WebviewTag } from 'electron';
+import { ITab } from '../interfaces/ITab';
 
 export class Tab implements ITab
 {

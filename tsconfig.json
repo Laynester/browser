@@ -1,20 +1,21 @@
 {
   "compilerOptions": {
-    "target": "ES2015",
+    "module": "None",
+    "target": "es2017",
     "allowJs": true,
     "skipLibCheck": true,
     "strict": false,
     "forceConsistentCasingInFileNames": true,
     "esModuleInterop": true,
-    "module": "commonjs",
     "moduleResolution": "node",
-    "resolveJsonModule": true,
     "isolatedModules": false,
     "jsx": "react-jsx",
     "outDir": "dist",
     "baseUrl": ".",
-    "incremental": false
+    "incremental": false,
+    "lib": ["dom", "esnext"],
+    "experimentalDecorators": true,
+    "sourceMap": true,
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules"]
 }

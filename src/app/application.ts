@@ -2,6 +2,7 @@ import { app, BrowserWindow, ipcMain } from 'electron';
 import * as path from 'path';
 import contextMenu from 'electron-context-menu';
 import { ipcHooks } from './ipcHooks';
+import { shortcuts } from './shortcuts';
 
 export class Application
 {
@@ -53,17 +54,20 @@ export class Application
             height: 720,
             width: 1280,
             frame: false,
-            titleBarStyle: "hiddenInset",
+            titleBarStyle: 'hiddenInset',
             vibrancy: 'ultra-dark',
             webPreferences: {
                 nodeIntegration: true,
                 webviewTag: true,
-                plugins: true
+                plugins: true,
+                enableRemoteModule: true,
+                contextIsolation: false
             }
         });
 
         this.mainWindow.loadFile(path.join(__dirname, '../../src/index.html'));
         new ipcHooks(this);
+        new shortcuts(this)
     }
 
     private onAllClosed(): void

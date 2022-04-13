@@ -1,5 +1,5 @@
-import React, { createContext, Dispatch, FC, ProviderProps, SetStateAction, useContext, useEffect, useState } from 'react';
-import { loadHistory, saveHistory } from '../browser/history';
+import React, { createContext, Dispatch, FC, SetStateAction, useContext, useState } from 'react';
+import { BrowserConfig } from '../browser/browserConfig';
 import { ITab } from '../interfaces/ITab';
 
 interface IAppContext
@@ -8,8 +8,8 @@ interface IAppContext
     setTabs: Dispatch<SetStateAction<ITab[]>>;
     selectedTab: number
     setTab: Dispatch<SetStateAction<number>>;
-    history: ITab[];
-    setHistory: Dispatch<SetStateAction<ITab[]>>;
+    browserConfig: BrowserConfig;
+    setBrowserConfig: Dispatch<SetStateAction<BrowserConfig>>;
 }
 
 const AppContext = createContext<IAppContext>({
@@ -17,29 +17,18 @@ const AppContext = createContext<IAppContext>({
     setTabs:null,
     selectedTab: 0,
     setTab: null,
-    history: [],
-    setHistory: null
+    browserConfig: null,
+    setBrowserConfig: null
 });
 
-export const AppContextProvider: FC<{children: React.ReactNode}> = (props) =>
+export const AppContextProvider: FC<{ children: React.ReactNode }> = (props) =>
 {
     const [ tabs, setTabs ] = useState<ITab[]>([]);
-    const [selectedTab, setTab] = useState<number>(0);
+    const [ selectedTab, setTab ] = useState<number>(0);
     
-    const [history, setHistory] = useState<ITab[]>([]);
-    
-    useEffect(() =>
-    {
-        if (!history.length) return;
-        saveHistory(history);
-    }, [history])
-    
-    useEffect(() =>
-    {
-        setHistory(loadHistory());
-    },[])
+    const [ browserConfig, setBrowserConfig ] = useState<BrowserConfig>(new BrowserConfig()); 
 
-    return <AppContext.Provider value={ { tabs, setTabs, selectedTab, setTab, history, setHistory } }>{ props.children }</AppContext.Provider>
+    return <AppContext.Provider value={ { tabs, setTabs, selectedTab, setTab, browserConfig, setBrowserConfig } }>{ props.children }</AppContext.Provider>
 };
 
 export const useAppContext = () => useContext(AppContext);

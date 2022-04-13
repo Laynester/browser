@@ -89,3 +89,5 @@ typings/
 out/
 
 dist/
+resources/browser.json
+target/
