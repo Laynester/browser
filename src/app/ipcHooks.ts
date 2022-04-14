@@ -1,4 +1,4 @@
-import { app, BrowserWindow, globalShortcut, ipcMain, ipcRenderer, WebContents } from 'electron';
+import { app, BrowserWindow, globalShortcut, ipcMain, ipcRenderer, WebContents, WebviewTag } from 'electron';
 import { IpcMainEvent } from 'electron/main';
 import { Application } from './application';
 
@@ -11,8 +11,10 @@ export class ipcHooks {
 
         ipcMain.on('electron-react-titlebar/maximumize/set', this.onTitleMaximize.bind(this));
 
+        ipcMain.on('app/devtools', this.onDevTools.bind(this));
+
         app.on('web-contents-created', (webContentsCreatedEvent, contents) => {
-            if (contents.getType() === 'webview') {
+            if (contents.getType() === 'browserView') {
                 contents.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
                     event.preventDefault();
                     if (disposition !== 'new-window') return;
@@ -44,5 +46,10 @@ export class ipcHooks {
                 this.mainWindow.maximize();
             }
         }
+    }
+
+    private onDevTools(event: IpcMainEvent) {
+        this.mainWindow.webContents.setDevToolsWebContents(null);
+        this.mainWindow.webContents.openDevTools();
     }
 }

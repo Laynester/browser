@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserView, BrowserWindow, ipcMain } from 'electron';
 import * as path from 'path';
 import contextMenu from 'electron-context-menu';
 import { ipcHooks } from './ipcHooks';
@@ -16,6 +16,7 @@ export class Application {
         app.commandLine.appendSwitch('disable-features', 'CrossOriginOpenerPolicy');
         app.commandLine.appendSwitch('disable-renderer-backgrounding');
         app.commandLine.appendSwitch('--enable-npapi');
+        app.commandLine.appendSwitch('disable-site-isolation-trials');
 
         if (process.platform !== 'darwin') {
             app.commandLine.appendSwitch('high-dpi-support', '1');
@@ -59,6 +60,7 @@ export class Application {
         });
 
         this.mainWindow.loadFile(path.join(__dirname, '../../src/index.html'));
+        
         new ipcHooks(this);
         new shortcuts(this);
     }

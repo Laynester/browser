@@ -43,38 +43,24 @@ export default function TitleBar() {
             flushSync(() => {
                 setUrlValue(url);
             });
-            if (tabs.length == 0) {
-                setTabs((prevValue) => {
-                    const newArray = [ ...prevValue ];
+            setTabs((prevValue) => {
+                const newArray = [ ...prevValue ];
 
-                    let newUrl = new Tab(tabs.length + 1, url, url);
-
-                    newArray.push(newUrl);
-
-                    setTab(tabs.length + 1);
-
-                    return newArray;
+                newArray.forEach((tab) => {
+                    if (tab.id === selectedTab) {
+                        tab.url = url;
+                    }
                 });
-            } else {
-                setTabs((prevValue) => {
-                    const newArray = [ ...prevValue ];
 
-                    newArray.forEach((tab) => {
-                        if (tab.id === selectedTab) {
-                            tab.url = url;
-                        }
-                    });
-
-                    return newArray;
-                });
-            }
+                return newArray;
+            });
             
             setBrowserConfig((config) => {
                 config.pushHistory(url);
                 return config;
             });
         } 
-    },[ setTabs, tabs, setBrowserConfig, selectedTab, setUrlValue, setTab, urlValue ]);
+    },[ setTabs, setBrowserConfig, selectedTab, setUrlValue, urlValue ]);
 
     const focusBlur = useCallback((type: string) => {
         if (!activeTab) return;
@@ -84,7 +70,7 @@ export default function TitleBar() {
         if (type == 'blur') setUrlValue(lastInArray(activeTab.routes).replace(/^https?:\/\//, ''));
         else setUrlValue(lastInArray(activeTab.routes));
         
-    }, [ activeTab ]);
+    }, [ activeTab, setUrlValue ]);
 
     return (
         <div className="titlebar" onDoubleClick={ toggleSize }>

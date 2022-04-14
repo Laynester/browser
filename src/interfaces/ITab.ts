@@ -1,5 +1,4 @@
-import { WebviewTag } from 'electron';
-
+const { BrowserView } = require('electron').remote;
 export interface ITab
 {
     id: number;
@@ -7,6 +6,6 @@ export interface ITab
     text: string;
     canGoBack: boolean;
     canGoForward: boolean;
-    webview: WebviewTag;
+    browserView: typeof BrowserView
     routes: string[];
 }

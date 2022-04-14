@@ -1,7 +1,7 @@
 import { ipcRenderer } from 'electron/renderer';
 import { useCallback, useEffect } from 'react';
 import { useAppContext } from '../app/appContext';
-import { findInArray, Tab } from '../utils';
+import { findInArray, lastInArray, Tab } from '../utils';
 import TabComponent from './tabComponent';
 
 export default function Tabs() {
@@ -11,7 +11,7 @@ export default function Tabs() {
         setTabs(prevValue => {
             const newArray = [ ...prevValue ];
     
-            let newId = newArray.length + 1;
+            let newId = lastInArray(newArray).id + 1;
     
             newArray.push(new Tab(newId, 'internal://startpage', 'internal://startpage'));
     

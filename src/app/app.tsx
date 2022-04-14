@@ -16,8 +16,10 @@ export default function App() {
     } as React.CSSProperties;
     
     return <div className="root" style={ style }>
-        <TitleBar />
-        <Tabs />
+        <div id="titlebar">
+            <TitleBar />
+            <Tabs />
+        </div>
         <Webviews />
     </div>;
 }

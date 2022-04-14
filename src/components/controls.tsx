@@ -26,8 +26,8 @@ export default function Controls() {
 
     const doAction = (action: string) => {
         if (!activeTab) return false;
-        if (action === 'back') return activeTab.webview.goBack();
-        if (action === 'forward') return activeTab.webview.goForward();
+        if (action === 'back') return activeTab.browserView.webContents.canGoBack();
+        if (action === 'forward') return activeTab.browserView.webContents.goForward();
         return;
     };
     
