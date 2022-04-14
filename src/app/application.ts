@@ -40,7 +40,7 @@ export class Application {
                 if (process.arch === 'x64' || process.arch === 'arm64') plugins.flash.name = 'win/x64/pepflashplayer.dll';
                 break;
         }
-        app.commandLine.appendSwitch('--ppapi-flash-path', path.join(__dirname.includes('.asar') ? process.resourcesPath : __dirname, '../../resources/flash/' + plugins.flash.name));
+        app.commandLine.appendSwitch('--ppapi-flash-path', path.join(__dirname.includes('.asar') ? process.resourcesPath : __dirname, __dirname.includes('.asar') ? '/resources/flash/' : '../../resources/flash/', plugins.flash.name));
         app.commandLine.appendSwitch('--ppapi-flash-version', plugins.flash.version);
     }
 
@@ -58,6 +58,8 @@ export class Application {
                 contextIsolation: false
             }
         });
+
+        console.log(path.join(__dirname, '../index.html'));
 
         this.mainWindow.loadFile(path.join(__dirname, '../../src/index.html'));
         

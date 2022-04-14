@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
-const filePath = path.join(__dirname.includes('.asar') ? process.resourcesPath : __dirname, '../../resources/browser.json');
+const filePath = path.join(__dirname.includes('.asar') ? process.resourcesPath : __dirname, __dirname.includes('.asar') ? '../../browser.json' : '../../resources/browser.json');
 export class BrowserConfig {
     public preferences = {
         windowColor: '#0062ff'
@@ -14,8 +14,15 @@ export class BrowserConfig {
     }
 
     private load() {
+        let plugins = {
+            flash: {
+                name: 'win/x32/pepflashplayer.dll',
+                version: '32.0.0.363',
+            }
+        };
+        
         try {
-            let data: BrowserConfig = require('../../resources/browser.json');
+            let data: BrowserConfig = require(filePath);
             this.preferences = data.preferences;
             this.history = data.history;
             this.bookmarks = data.bookmarks;

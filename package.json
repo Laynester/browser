@@ -3,12 +3,16 @@
   "productName": "my-new-app",
   "version": "1.0.0",
   "description": "My Electron application description",
-  "main": "dist/app/application.js",
+  "main": "./dist/app/application.js",
   "scripts": {
     "start": "tsc && electron .",
     "watch": "tsc -w",
     "fix": "eslint --fix --ext .ts --ext .tsx .",
-    "lint": "eslint --ext .ts ."
+    "lint": "eslint --ext .ts .",
+    "pack": "electron-builder --dir",
+    "mac": "electron-builder --macos",
+    "windows": "electron-builder --windows",
+    "linux": "electron-builder --linux"
   },
   "keywords": [],
   "author": {
@@ -18,11 +22,12 @@
   "license": "MIT",
   "build": {
     "appId": "com.habboretro.Browser",
-    "extraResources": [
-      {
-        "from": "./plugins/",
-        "to": "../plugins"
-      }
+    "extraResources":[
+      "./resources/flash/**"
+    ],
+    "files": [
+      "dist/**/*",
+      "src/index.html"
     ],
     "mac": {
       "category": "public.games.social-networking",
@@ -70,11 +75,11 @@
     "@types/react": "^18.0.1",
     "@types/react-dom": "^18.0.0",
     "electron": "^11.2.0",
-    "typescript": "~4.5.4"
+    "typescript": "~4.5.4",
+    "electron-builder": "^22.9.1"
   },
   "dependencies": {
     "@types/mousetrap": "^1.6.9",
-    "electron-builder": "^22.9.1",
     "electron-context-menu": "^3.1.2",
     "mousetrap": "^1.6.5",
     "react": "^18.0.0",
